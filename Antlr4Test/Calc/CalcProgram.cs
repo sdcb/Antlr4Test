@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
-using static Antlr4Test.CalcParser;
 using System.IO;
+using static Antlr4Test.Calc.CalcParser;
 
 namespace Antlr4Test.Calc
 {
@@ -79,12 +79,12 @@ namespace Antlr4Test.Calc
                 VarGetter = varGetter;
             }
 
-            public override double VisitParenthesis([NotNull] ParenthesisContext context)
+            public override double VisitParenthesis([NotNull] CalcParser.ParenthesisContext context)
             {
                 return Visit(context.GetChild<ExpressionContext>(0));
             }
 
-            public override double VisitNumber([NotNull] CalcParser.NumberContext context)
+            public override double VisitNumber([NotNull] NumberContext context)
             {
                 return double.Parse(context.GetText());
             }
@@ -139,7 +139,7 @@ namespace Antlr4Test.Calc
                 }
             }
 
-            public override double VisitVariable([NotNull] VariableContext context)
+            public override double VisitVariable([NotNull] CalcParser.VariableContext context)
             {
                 var syntax = context.GetText();
                 return VarGetter(syntax);

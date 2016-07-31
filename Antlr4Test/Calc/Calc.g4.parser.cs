@@ -1,4 +1,4 @@
-﻿namespace Antlr4Test
+﻿namespace Antlr4Test.Calc
 {
     partial class CalcParser
     {

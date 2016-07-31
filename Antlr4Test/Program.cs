@@ -12,8 +12,8 @@ namespace Antlr4Test
     {
         public static void Main()
         {
-            Console.WriteLine("Calc: ");
-            CalcProgram.Run();
+            //Console.WriteLine("Calc: ");
+            //CalcProgram.Run();
 
             Console.WriteLine("\r\nSQL: ");
             SqlProgram.Run();
