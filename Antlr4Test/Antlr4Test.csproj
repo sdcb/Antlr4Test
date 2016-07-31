@@ -57,25 +57,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calc.g4.lexer.cs">
+    <Compile Include="Calc\Calc.g4.lexer.cs">
       <DependentUpon>Calc.g4</DependentUpon>
     </Compile>
-    <Compile Include="Calc.g4.parser.cs">
+    <Compile Include="Calc\Calc.g4.parser.cs">
       <DependentUpon>Calc.g4</DependentUpon>
     </Compile>
+    <Compile Include="Calc\CalcProgram.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sql\SqlProgram.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Antlr4 Include="Calc.g4">
+    <Antlr4 Include="Calc\Calc.g4">
       <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>Antlr4Test</CustomToolNamespace>
+      <CustomToolNamespace>Antlr4Test.Calc</CustomToolNamespace>
     </Antlr4>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="input.txt">
+    <Content Include="Calc\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
