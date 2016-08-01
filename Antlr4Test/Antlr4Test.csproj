@@ -66,15 +66,6 @@
     <Compile Include="Calc\CalcProgram.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sql\Common.g4.cs">
-      <DependentUpon>CommonLexer.g4</DependentUpon>
-    </Compile>
-    <Compile Include="Sql\Expression.g4.lexer.cs">
-      <DependentUpon>Expression.g4</DependentUpon>
-    </Compile>
-    <Compile Include="Sql\Expression.g4.parser.cs">
-      <DependentUpon>Expression.g4</DependentUpon>
-    </Compile>
     <Compile Include="Sql\Sql.g4.lexer.cs">
       <DependentUpon>Sql.g4</DependentUpon>
     </Compile>
@@ -91,14 +82,6 @@
     </Antlr4>
     <None Include="packages.config" />
     <Antlr4 Include="Sql\Sql.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>Antlr4Test.Sql</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="Sql\Expression.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>Antlr4Test.Sql</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="Sql\CommonLexer.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>Antlr4Test.Sql</CustomToolNamespace>
     </Antlr4>
