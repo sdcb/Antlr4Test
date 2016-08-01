@@ -1,15 +1,2 @@
-﻿a = 3;
-write(a);
-
-b = a + 3;
-write(b);
-
-c = b * 2;
-write(c);
-
-d = (1+2) * 3;
-write(d);
-
-write(pow(2, 4));
-
-write(abs(-1) + pow(2, abs(-2))); // test
+﻿a = read();
+write(a*2);

@@ -11,6 +11,7 @@ statement
 
 expression
 	: '(' expression ')'                           #Parenthesis
+	| SYNTAX '(' ')'                               #SingleFunction
 	| SYNTAX '(' expression ')'                    #Function
 	| SYNTAX '(' expression ',' expression ')'     #BinaryFunction
 	| expression operator = ('*' | '/') expression #Binary
