@@ -27,10 +27,35 @@ expression
 	| expression operator = ('+' | '-') expression #Binary
 	| NUMBER                                       #Number
 	| STRING									   #String
+	| DATE                                         #Date
+	;
+
+DATE
+	: YEAR SEPARATOR MONTH SEPARATOR DAY
+	;
+
+fragment DIGIT
+	: [0-9]
+	;
+
+fragment DAY
+	: DIGIT? DIGIT
+	;
+
+fragment MONTH
+	: DIGIT? DIGIT
+	;
+
+fragment YEAR
+	: DIGIT DIGIT DIGIT DIGIT
 	;
 
 BETWEEN
 	: B E T W E E N
+	;
+
+SEPARATOR
+	: ('-'|'/')
 	;
 
 AND

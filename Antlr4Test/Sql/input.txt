@@ -1,1 +1,1 @@
-﻿Age BETWEEN 5 AND 10 OR Name in ("Fuck", "Shi" + "t")
+﻿BirthDay BETWEEN 2015/1/1 AND 2015/1/3 OR Name IN ("Test", "Shit")

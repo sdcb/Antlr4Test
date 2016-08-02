@@ -25,10 +25,10 @@ namespace Antlr4Test.Sql
 
             var persons = new List<Person>
             {
-                new Person { Name = "Bush", Age = 12 },
-                new Person { Name = "Shit", Age = 23 },
-                new Person { Name = "Fuck", Age = 5 },
-                new Person { Name = "Test", Age = 99 },
+                new Person { Name = "Bush", Age = 12, BirthDay = DateTime.Parse("2015/1/1") },
+                new Person { Name = "Shit", Age = 23, BirthDay = DateTime.Parse("2015/1/2") },
+                new Person { Name = "Fuck", Age = 5, BirthDay = DateTime.Parse("2015/1/3") },
+                new Person { Name = "Test", Age = 99, BirthDay = DateTime.Parse("2015/1/4") },
             };
 
             var visitor = new PredicateVisitor<Person>();
@@ -36,7 +36,7 @@ namespace Antlr4Test.Sql
 
             foreach (var data in dataOut)
             {
-                Console.WriteLine($"Name = {data.Name}, Age = {data.Age}.");
+                Console.WriteLine($"Name = {data.Name}, Age = {data.Age}, Date = {data.BirthDay}.");
             }
         }
 
@@ -45,6 +45,8 @@ namespace Antlr4Test.Sql
             public string Name { get; set; }
 
             public int Age { get; set; }
+
+            public DateTime BirthDay { get; set; }
         }
 
         public class PredicateVisitor<T> : SqlBaseVisitor<Expression>
@@ -175,7 +177,7 @@ namespace Antlr4Test.Sql
             public override SqlValue VisitFunction([NotNull] FunctionContext context)
             {
                 var func = context.GetChild(0).GetText();
-                var v = Visit(context.GetChild<ExpressionContext>(0));
+                var v = (double)Visit(context.GetChild<ExpressionContext>(0));
 
                 switch (func)
                 {
@@ -189,8 +191,8 @@ namespace Antlr4Test.Sql
             public override SqlValue VisitBinaryFunction([NotNull] BinaryFunctionContext context)
             {
                 var func = context.GetChild(0).GetText();
-                var v1 = Visit(context.GetChild<ExpressionContext>(0));
-                var v2 = Visit(context.GetChild<ExpressionContext>(1));
+                var v1 = (double)Visit(context.GetChild<ExpressionContext>(0));
+                var v2 = (double)Visit(context.GetChild<ExpressionContext>(1));
 
                 switch (func)
                 {
@@ -207,6 +209,11 @@ namespace Antlr4Test.Sql
                 return text.Substring(1, text.Length - 2);
             }
 
+            public override SqlValue VisitDate([NotNull] DateContext context)
+            {
+                return SqlValue.ParseDate(context.GetText());
+            }
+
             public override SqlValue VisitBinary([NotNull] BinaryContext context)
             {
                 var op = context.GetChild(1).GetText();
@@ -220,9 +227,9 @@ namespace Antlr4Test.Sql
                     case "-":
                         return l - r;
                     case "*":
-                        return l * r;
+                        return (double)l * (double)r;
                     case "/":
-                        return l / r;
+                        return (double)l / (double)r;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(op));
                 }
@@ -231,21 +238,27 @@ namespace Antlr4Test.Sql
 
         public struct SqlValue
         {
-            public double? Number;
+            private double? Number;
 
-            public string String;
+            private string String;
 
-            public ValueTypes ValueType;
+            private DateTime? Date;
+
+            public SqlValues ValueType;
 
             public object Value()
             {
-                if (ValueType == ValueTypes.Number)
+                if (ValueType == SqlValues.Number)
                 {
                     return Number.Value;
                 }
-                else if (ValueType == ValueTypes.String)
+                else if (ValueType == SqlValues.String)
                 {
                     return String;
+                }
+                else if (ValueType == SqlValues.Date)
+                {
+                    return Date;
                 }
                 else
                 {
@@ -255,13 +268,17 @@ namespace Antlr4Test.Sql
 
             public override string ToString()
             {
-                if (ValueType == ValueTypes.Number)
+                if (ValueType == SqlValues.Number)
                 {
                     return Number.Value.ToString();
                 }
-                else if (ValueType == ValueTypes.String)
+                else if (ValueType == SqlValues.String)
                 {
                     return '"' + String + '"';
+                }
+                else if (ValueType == SqlValues.Date)
+                {
+                    return Date.Value.ToString();
                 }
                 throw new ArgumentOutOfRangeException(nameof(ValueType));
             }
@@ -270,7 +287,7 @@ namespace Antlr4Test.Sql
             {
                 return new SqlValue
                 {
-                    ValueType = ValueTypes.Number,
+                    ValueType = SqlValues.Number,
                     Number = double.Parse(text)
                 };
             }
@@ -279,22 +296,35 @@ namespace Antlr4Test.Sql
             {
                 return new SqlValue
                 {
-                    ValueType = ValueTypes.Number,
+                    ValueType = SqlValues.Number,
                     Number = v
                 };
             }
 
-            public static implicit operator double(SqlValue v)
+            public static SqlValue ParseDate(string text)
+            {
+                return new SqlValue
+                {
+                    ValueType = SqlValues.Date, 
+                    Date = DateTime.Parse(text)
+                };
+            }
+
+            public static explicit operator double(SqlValue v)
             {
                 return v.Number.Value;
             }
-
-            [return: NotNull]
-            public static implicit operator string(SqlValue v)
+            
+            public static explicit operator string(SqlValue v)
             {
                 if (v.String == null)
                     throw new NullReferenceException();
                 return v.String;
+            }
+
+            public static explicit operator DateTime(SqlValue v)
+            {
+                return v.Date.Value;
             }
 
             public static implicit operator SqlValue(double v)
@@ -302,16 +332,24 @@ namespace Antlr4Test.Sql
                 return ParseNumber(v);
             }
 
-            [return: NotNull]
-            public static implicit operator SqlValue([NotNull]string v)
+            public static implicit operator SqlValue(string v)
             {
                 if (v == null)
                     throw new NullReferenceException();
 
                 return new SqlValue
                 {
-                    ValueType = ValueTypes.String,
+                    ValueType = SqlValues.String,
                     String = v
+                };
+            }
+
+            public static implicit operator SqlValue(DateTime v)
+            {
+                return new SqlValue
+                {
+                    ValueType = SqlValues.Date,
+                    Date = v
                 };
             }
 
@@ -319,23 +357,36 @@ namespace Antlr4Test.Sql
             {
                 if (v1.ValueType == v2.ValueType)
                 {
-                    if (v1.ValueType == ValueTypes.Number)
+                    if (v1.ValueType == SqlValues.Number)
                     {
                         return (double)v1 + (double)v2;
                     }
-                    else if (v1.ValueType == ValueTypes.String)
+                    else if (v1.ValueType == SqlValues.String)
                     {
                         return (string)v1 + (string)v2;
                     }
                 }
-                throw new ArgumentOutOfRangeException();
+                throw new NotSupportedException();
+            }
+
+            public static SqlValue operator -(SqlValue v1, SqlValue v2)
+            {
+                if (v1.ValueType == v2.ValueType)
+                {
+                    if (v1.ValueType == SqlValues.Number)
+                    {
+                        return (double)v1 - (double)v2;
+                    }
+                }
+                throw new NotSupportedException();
             }
         }
 
-        public enum ValueTypes
+        public enum SqlValues
         {
             Number,
-            String
+            String, 
+            Date
         }
     }
 }
