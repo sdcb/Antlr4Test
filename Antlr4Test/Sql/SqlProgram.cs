@@ -122,7 +122,7 @@ namespace Antlr4Test.Sql
                     );
             }
 
-            public override Expression VisitIn([NotNull] InContext context)
+            public override Expression VisitContains([NotNull] ContainsContext context)
             {
                 var syntax = context.GetChild(0).GetText();
                 var values = context.children
@@ -141,7 +141,7 @@ namespace Antlr4Test.Sql
 
             public override Expression VisitParenthesis([NotNull] ParenthesisContext context)
             {
-                return Visit(context.GetChild<ExpressionContext>(0));
+                return Visit(context.GetChild<PredicateContext>(0));
             }
 
             public IQueryable<T> DoQuery(IQueryable<T> dataIn, IParseTree tree)

@@ -9,7 +9,7 @@ run
 	;
 
 predicate
-	: SYNTAX IN '(' expression (',' expression)* ')' #In
+	: SYNTAX IN '(' expression (',' expression)* ')' #Contains
 	| SYNTAX ('=' | '!=') expression                 #SingleOperator
 	| SYNTAX ('>' | '<' | '>=' | '<=') expression    #SingleOperator
 	| SYNTAX BETWEEN expression AND expression       #Between
