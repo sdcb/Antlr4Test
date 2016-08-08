@@ -10,6 +10,8 @@ using static Antlr4Test.Sql.SqlParser;
 using System.Linq.Expressions;
 using Antlr4.Runtime.Tree;
 using System.Reflection;
+using System.CodeDom.Compiler;
+using System.Text.RegularExpressions;
 
 namespace Antlr4Test.Sql
 {
@@ -25,10 +27,10 @@ namespace Antlr4Test.Sql
 
             var persons = new List<Person>
             {
-                new Person { Name = "Bush", Age = 12, BirthDay = DateTime.Parse("2015/1/1") },
-                new Person { Name = "Shit", Age = 23, BirthDay = DateTime.Parse("2015/1/2") },
-                new Person { Name = "Fuck", Age = 5, BirthDay = DateTime.Parse("2015/1/3") },
-                new Person { Name = "Test", Age = 99, BirthDay = DateTime.Parse("2015/1/4") },
+                new Person { Name = "B\"ush", Age = 12, BirthDay = DateTime.Parse("2015/1/1") },
+                new Person { Name = "S'hit", Age = 23, BirthDay = DateTime.Parse("2015/1/2") },
+                new Person { Name = "F\"uck", Age = 5, BirthDay = DateTime.Parse("2015/1/3") },
+                new Person { Name = "T'est", Age = 99, BirthDay = DateTime.Parse("2015/1/4") },
             };
 
             var visitor = new PredicateVisitor<Person>();
@@ -206,7 +208,11 @@ namespace Antlr4Test.Sql
             public override SqlValue VisitString([NotNull] StringContext context)
             {
                 var text = context.GetText();
-                return text.Substring(1, text.Length - 2);
+                var ch = text[0];
+                var escapedChar = ch == '\'' ? '\'' : '"';
+                var inner = text.Substring(1, text.Length - 2);
+                var result = new Regex($@"\\([\\\/bfnrt{escapedChar}])").Replace(inner, "$1");
+                return result;
             }
 
             public override SqlValue VisitDate([NotNull] DateContext context)

@@ -79,15 +79,24 @@ SYNTAX
 	;
 
 STRING
-   : '"' (EscapedChar | RegularChar)* '"'
-   ;
+	: '"' (RegularDoubleChar | EscapedDoubleChar)* '"'
+	| '\'' (RegularSingleChar | EscapedSingleChar)* '\''
+	;
 
-fragment RegularChar
+fragment RegularSingleChar
+	: ~ ['\\]
+	;
+
+fragment RegularDoubleChar
 	: ~ ["\\]
 	;
 
-fragment EscapedChar
+fragment EscapedDoubleChar
 	: '\\' ["\\/bfnrt]
+	;
+
+fragment EscapedSingleChar
+	: '\\' ['\\/bfnrt]
 	;
 
 WS
