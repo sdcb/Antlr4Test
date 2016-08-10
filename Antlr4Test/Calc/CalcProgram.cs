@@ -118,6 +118,19 @@ namespace Antlr4Test.Calc
                 }
             }
 
+            public override double VisitSingleFunction([NotNull] SingleFunctionContext context)
+            {
+                var func = context.GetChild(0).GetText();
+
+                switch (func)
+                {
+                    case "read":
+                        return double.Parse(Console.ReadLine());
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(func));
+                }
+            }
+
             public override double VisitBinary([NotNull] BinaryContext context)
             {
                 var op = context.GetChild(1).GetText();

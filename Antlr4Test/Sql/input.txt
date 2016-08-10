@@ -1,1 +1,1 @@
-﻿"3" + "4"
+﻿Name IN ("B\"ush", 'S\'hit', 'F"uck', "T'est")
