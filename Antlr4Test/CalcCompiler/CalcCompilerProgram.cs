@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Misc;
 
 namespace Antlr4Test.CalcCompiler
 {
@@ -54,6 +55,27 @@ namespace Antlr4Test.CalcCompiler
 
 
             // expression
+            public override Result VisitNumber([NotNull] CalcCompilerParser.NumberContext context)
+            {
+                var v = double.Parse(context.GetText());
+                _il.Emit(OpCodes.Ldc_R8, v);
+                return Result.Ok();
+            }
+
+            public override Result VisitVariable([NotNull] CalcCompilerParser.VariableContext context)
+            {
+                var syntax = context.GetText();
+                if (_vars.ContainsKey(syntax))
+                {
+                    var local = _vars[syntax];
+                    _il.Emit(OpCodes.Ldloc, local);
+                    return Result.Ok();
+                }
+                else
+                {
+                    return Result.Fail($"未定义的变量：{syntax}.");
+                }
+            }
         }
     }
 }
