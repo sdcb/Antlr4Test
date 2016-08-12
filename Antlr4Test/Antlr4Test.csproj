@@ -101,6 +101,9 @@
     </Antlr4>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CalcCompiler\input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Calc\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

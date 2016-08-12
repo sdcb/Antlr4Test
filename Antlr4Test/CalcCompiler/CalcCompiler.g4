@@ -13,6 +13,7 @@ expression
 	: '(' expression ')'                           #Parenthesis
 	| SYNTAX '(' expression ')'                    #Function
 	| SYNTAX '(' expression ',' expression ')'     #BinaryFunction
+	| SYNTAX '(' ')'                               #VoidFunction
 	| expression operator = ('*' | '/') expression #Binary
 	| expression operator = ('+' | '-') expression #Binary
 	| NUMBER                                       #Number

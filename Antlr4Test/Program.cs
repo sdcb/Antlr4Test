@@ -1,4 +1,5 @@
 ﻿using Antlr4Test.Calc;
+using Antlr4Test.CalcCompiler;
 using Antlr4Test.Sql;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace Antlr4Test
     {
         public static void Main()
         {
-            Console.WriteLine("Calc: ");
-            CalcProgram.Run();
+            //Console.WriteLine("Calc: ");
+            //CalcProgram.Run();
 
             //Console.WriteLine("\r\nSQL: ");
             //SqlProgram.Run();
+
+            CalcCompilerProgram.Run();
         }
     }
 }
