@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
 using static Antlr4Test.CalcCompiler.CalcCompilerParser;
 using System.Reflection;
+using System.Diagnostics;
+using System.Diagnostics.SymbolStore;
 
 namespace Antlr4Test.CalcCompiler
 {
@@ -27,7 +29,7 @@ namespace Antlr4Test.CalcCompiler
             if (result.IsSuccess)
             {
                 Console.WriteLine("编译成功.");
-                //result.Value();
+                result.Value();
             }
             else
             {
@@ -37,22 +39,36 @@ namespace Antlr4Test.CalcCompiler
 
         public class StatementVisitor : CalcCompilerBaseVisitor<Result>
         {
-            protected StatementVisitor(ILGenerator il)
+            protected StatementVisitor(ILGenerator il, ISymbolDocumentWriter doc)
             {
                 _il = il;
+                _doc = doc;
             }
 
-            private ILGenerator _il;
+            private readonly ILGenerator _il;
             private Dictionary<string, LocalBuilder> _vars = new Dictionary<string, LocalBuilder>();
+            private readonly ISymbolDocumentWriter _doc;
 
             public static Result<Action> CreateMethod(IParseTree tree)
             {
                 var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("Assembly"), AssemblyBuilderAccess.RunAndSave);
-                var moduleBuilder = assemblyBuilder.DefineDynamicModule("Program", "Program.exe");
+
+                Type daType = typeof(DebuggableAttribute);
+                ConstructorInfo daCtor = daType.GetConstructor(new Type[] { typeof(DebuggableAttribute.DebuggingModes) });
+                CustomAttributeBuilder daBuilder = new CustomAttributeBuilder(daCtor, new object[] {
+                    DebuggableAttribute.DebuggingModes.DisableOptimizations |
+                    DebuggableAttribute.DebuggingModes.Default });
+                assemblyBuilder.SetCustomAttribute(daBuilder);
+
+                var moduleBuilder = assemblyBuilder.DefineDynamicModule("Program", true);
+
+                var doc = moduleBuilder.DefineDocument(@"CalcCompiler/input.txt", Guid.Empty, Guid.Empty, Guid.Empty);
+
                 var typeBuilder = moduleBuilder.DefineType("Foo", TypeAttributes.Public | TypeAttributes.Class);
                 var method = typeBuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+                
                 var il = method.GetILGenerator();
-                var visitor = new StatementVisitor(il);
+                var visitor = new StatementVisitor(il, doc);
                 var ok = visitor.Visit(tree);
 
                 if (ok.IsSuccess)
@@ -94,6 +110,8 @@ namespace Antlr4Test.CalcCompiler
 
                 if (r.IsSuccess)
                 {
+                    _il.MarkSequencePoint(_doc, context.Start.Line, context.Start.Column, context.Stop.Line, context.Stop.Column);
+
                     LocalBuilder local;
                     if (_vars.ContainsKey(syntax))
                     {
@@ -102,6 +120,7 @@ namespace Antlr4Test.CalcCompiler
                     else
                     {
                         local = _il.DeclareLocal(typeof(double));
+                        local.SetLocalSymInfo(syntax);
                         _vars[syntax] = local;
                     }
 
@@ -121,6 +140,8 @@ namespace Antlr4Test.CalcCompiler
 
                 if (v.IsSuccess)
                 {
+                    _il.MarkSequencePoint(_doc, context.Start.Line, context.Start.Column, context.Stop.Line, context.Stop.Column);
+
                     switch (syntax)
                     {
                         case "write":
