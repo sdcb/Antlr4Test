@@ -10,14 +10,15 @@ statement
 	;
 
 expression
-	: '(' expression ')'                           #Parenthesis
-	| SYNTAX '(' expression ')'                    #Function
-	| SYNTAX '(' expression ',' expression ')'     #BinaryFunction
-	| SYNTAX '(' ')'                               #VoidFunction
-	| expression operator = ('*' | '/') expression #Binary
-	| expression operator = ('+' | '-') expression #Binary
-	| NUMBER                                       #Number
-	| SYNTAX									   #Variable
+	: '(' expression ')'                                 #Parenthesis
+	| SYNTAX '(' expression ')'                          #Function
+	| SYNTAX '(' expression ',' expression ')'           #BinaryFunction
+	| SYNTAX '(' ')'                                     #VoidFunction
+	| expression '^' expression             #Binary
+	| expression operator = ('*' | '/' | '%') expression #Binary
+	| expression operator = ('+' | '-') expression       #Binary
+	| NUMBER                                             #Number
+	| SYNTAX									         #Variable
 	;
 
 BlockComment
@@ -35,6 +36,8 @@ SUB: '-';
 MUL: '*';
 DIV: '/';
 EOL: ';';
+MOD: '%';
+POW: '^';
 
 NUMBER
 	: '-'? [0-9]+ ('.' [0-9]+)?

@@ -1,5 +1,2 @@
-﻿a = 3;
-b = 4;
-c = 5;
-d = read();
-write(a+b);
+﻿write(3^4*2);
+write(27%5);

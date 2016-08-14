@@ -66,7 +66,7 @@ namespace Antlr4Test.CalcCompiler
 
                 var typeBuilder = moduleBuilder.DefineType("Foo", TypeAttributes.Public | TypeAttributes.Class);
                 var method = typeBuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
-                
+
                 var il = method.GetILGenerator();
                 var visitor = new StatementVisitor(il, doc);
                 var ok = visitor.Visit(tree);
@@ -202,6 +202,13 @@ namespace Antlr4Test.CalcCompiler
                             break;
                         case "/":
                             _il.Emit(OpCodes.Div);
+                            break;
+                        case "%":
+                            _il.Emit(OpCodes.Rem);
+                            break;
+                        case "^":
+                            _il.Emit(OpCodes.Call, typeof(Math).GetMethod(nameof(Math.Pow),
+                                new[] { typeof(double), typeof(double) }));
                             break;
                         default:
                             return Result.Fail($"未知的标点符号：{op}.");
