@@ -60,7 +60,7 @@ namespace Antlr4Test.CalcCompiler
                     DebuggableAttribute.DebuggingModes.Default });
                 assemblyBuilder.SetCustomAttribute(daBuilder);
 
-                var moduleBuilder = assemblyBuilder.DefineDynamicModule("Program", true);
+                var moduleBuilder = assemblyBuilder.DefineDynamicModule("Program", "Program.exe", true);
 
                 var doc = moduleBuilder.DefineDocument(@"CalcCompiler/input.txt", Guid.Empty, Guid.Empty, Guid.Empty);
 
