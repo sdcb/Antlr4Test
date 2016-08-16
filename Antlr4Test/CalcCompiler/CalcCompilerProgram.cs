@@ -265,6 +265,9 @@ namespace Antlr4Test.CalcCompiler
                         case "cos":
                             _il.Emit(OpCodes.Call, typeof(Math).GetMethod(nameof(Math.Cos), new[] { typeof(double) }));
                             break;
+                        case "sqrt":
+                            _il.Emit(OpCodes.Call, typeof(Math).GetMethod(nameof(Math.Sqrt), new[] { typeof(double) }));
+                            break;
                         default:
                             return Result.Fail($"未知的一元函数：${func}.");
                     }
