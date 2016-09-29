@@ -145,6 +145,9 @@ namespace Antlr4Test.CalcCompiler
                     switch (syntax)
                     {
                         case "write":
+                            _il.Emit(OpCodes.Call, typeof(Console).GetMethod(nameof(Console.Write), new[] { typeof(double) }));
+                            break;
+                        case "writeln":
                             _il.Emit(OpCodes.Call, typeof(Console).GetMethod(nameof(Console.WriteLine), new[] { typeof(double) }));
                             break;
                         default:
