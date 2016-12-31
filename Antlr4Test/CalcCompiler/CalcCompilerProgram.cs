@@ -145,6 +145,9 @@ namespace Antlr4Test.CalcCompiler
                     switch (syntax)
                     {
                         case "write":
+                            _il.Emit(OpCodes.Call, typeof(Console).GetMethod(nameof(Console.Write), new[] { typeof(double) }));
+                            break;
+                        case "writeln":
                             _il.Emit(OpCodes.Call, typeof(Console).GetMethod(nameof(Console.WriteLine), new[] { typeof(double) }));
                             break;
                         default:
@@ -267,6 +270,9 @@ namespace Antlr4Test.CalcCompiler
                             break;
                         case "sqrt":
                             _il.Emit(OpCodes.Call, typeof(Math).GetMethod(nameof(Math.Sqrt), new[] { typeof(double) }));
+                            break;
+                        case "log":
+                            _il.Emit(OpCodes.Call, typeof(Math).GetMethod(nameof(Math.Log), new[] { typeof(double) }));
                             break;
                         default:
                             return Result.Fail($"未知的一元函数：${func}.");
