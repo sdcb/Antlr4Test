@@ -19,7 +19,7 @@ namespace Antlr4Test.CalcCompiler
     {
         public static void Run()
         {
-            var input = File.ReadAllText("CalcCompiler/input.txt");
+            var input = File.ReadAllText("CalcCompiler/input.code");
             var inputStream = new AntlrInputStream(input);
             var lexer = new CalcCompilerLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
@@ -62,7 +62,7 @@ namespace Antlr4Test.CalcCompiler
 
                 var moduleBuilder = assemblyBuilder.DefineDynamicModule("Program", "Program.exe", true);
 
-                var doc = moduleBuilder.DefineDocument(@"CalcCompiler/input.txt", Guid.Empty, Guid.Empty, Guid.Empty);
+                var doc = moduleBuilder.DefineDocument(@"CalcCompiler/input.code", Guid.Empty, Guid.Empty, Guid.Empty);
 
                 var typeBuilder = moduleBuilder.DefineType("Foo", TypeAttributes.Public | TypeAttributes.Class);
                 var method = typeBuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
